@@ -17,11 +17,22 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableWebMvc
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private static final String[] PUBLIC_URLS = {
+            "/api/v1/auth/**",
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/v2/api-docs/**",
+            "/swagger-ui.html",
+            "/webjars/**"
+    };
 
     @Autowired
     private CustomUserDetailService userDetailService;
@@ -37,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/api/v1/auth/**").permitAll()
+                .antMatchers(PUBLIC_URLS).permitAll()
                 .antMatchers(HttpMethod.GET).permitAll()
 //                        "/api/v1/posts/**",
 //                        "/api/v1/users/**"

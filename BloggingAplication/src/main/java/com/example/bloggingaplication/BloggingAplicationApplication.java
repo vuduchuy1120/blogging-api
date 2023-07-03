@@ -43,11 +43,11 @@ public class BloggingAplicationApplication implements CommandLineRunner {
         try{
             Role role = new Role();
             role.setId(AppConstants.ADMIN_USER);
-            role.setRoleName("ADMIN_USER");
+            role.setRoleName("ROLE_ADMIN");
 
             Role role1 = new Role();
             role1.setId(AppConstants.NORMAL_USER);
-            role1.setRoleName("NORMAL_USER");
+            role1.setRoleName("ROLE_NORMAL");
 
             List<Role> roles = List.of(role, role1);
             List<Role> roles1 = this.roleRepository.saveAll(roles);

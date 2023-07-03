@@ -34,6 +34,7 @@ public class UserServiceImp implements UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = this.dtoToUser(userDto);
@@ -55,7 +56,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserDto getUserById(Integer id) {
-        User user = this.userRepository.findById(id).orElseThrow(() ->new ResourceNotFoundException("User", " id ", id));
+        User user = this.userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", " id ", id));
         return this.userToDto(user);
     }
 
@@ -68,12 +69,12 @@ public class UserServiceImp implements UserService {
 
     @Override
     public void deleteUser(Integer userId) {
-        User user = this.userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User", " id ", userId));
+        User user = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", " id ", userId));
         this.userRepository.delete(user);
     }
 
     @Override
-    public UserDto getUserByEmail(String email){
+    public UserDto getUserByEmail(String email) {
         User user = this.userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User ", " email: " + email, 0));
         return this.userToDto(user);
     }
@@ -89,15 +90,14 @@ public class UserServiceImp implements UserService {
         user.getRoles().add(role);
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDto.class);
-
-
     }
 
-    private User dtoToUser(UserDto userDto){
-        User user = new ModelMapper().map(userDto,User.class);
+    private User dtoToUser(UserDto userDto) {
+        User user = new ModelMapper().map(userDto, User.class);
         return user;
     }
-    public UserDto userToDto(User user){
+
+    public UserDto userToDto(User user) {
         UserDto userDto = new ModelMapper().map(user, UserDto.class);
         return userDto;
     }
