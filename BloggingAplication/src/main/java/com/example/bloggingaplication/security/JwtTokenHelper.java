@@ -28,6 +28,8 @@ public class JwtTokenHelper {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
+
+    // Lấy thông tin từ token
     private Claims getAllClaimsFromToken(String token){
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
@@ -39,10 +41,15 @@ public class JwtTokenHelper {
         Map<String, Object> claims = new HashMap<>();
         return doGenerateToken(claims, userDetails.getUsername());
     }
+
+    // Tạo JWT từ thông tin user
     private String doGenerateToken(Map<String, Object> claims, String subject){
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+JWT_TOKEN_VALIDITY*1000))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)      // Thông tin lưu trong JWT
+                .setIssuedAt(new Date(System.currentTimeMillis())) // Thời gian bắt đầu tạo
+                .setExpiration(new Date(System.currentTimeMillis()+JWT_TOKEN_VALIDITY*1000)) // Thời gian kết thúc
+                .signWith(SignatureAlgorithm.HS512, secret).compact(); // Mã hoá thông tin
     }
     public Boolean validateToken(String token, UserDetails userDetails){
         final String username = getUsernameFromToken(token);

@@ -1,17 +1,22 @@
 package com.example.bloggingaplication.services.implement;
 
 import ch.qos.logback.core.pattern.ConverterUtil;
+import com.example.bloggingaplication.config.AppConstants;
+import com.example.bloggingaplication.entity.Role;
 import com.example.bloggingaplication.entity.User;
 import com.example.bloggingaplication.exceptions.ResourceNotFoundException;
 import com.example.bloggingaplication.payloads.UserDto;
+import com.example.bloggingaplication.repositories.RoleRepository;
 import com.example.bloggingaplication.repositories.UserRepository;
 import com.example.bloggingaplication.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -23,6 +28,12 @@ public class UserServiceImp implements UserService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepository roleRepository;
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = this.dtoToUser(userDto);
@@ -65,6 +76,21 @@ public class UserServiceImp implements UserService {
     public UserDto getUserByEmail(String email){
         User user = this.userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User ", " email: " + email, 0));
         return this.userToDto(user);
+    }
+
+    @Override
+    public UserDto registerUser(UserDto userDto) {
+        User user = modelMapper.map(userDto, User.class);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // roles
+        Role role = roleRepository.findById(AppConstants.NORMAL_USER).get();
+
+        user.getRoles().add(role);
+        User savedUser = userRepository.save(user);
+        return modelMapper.map(savedUser, UserDto.class);
+
+
     }
 
     private User dtoToUser(UserDto userDto){

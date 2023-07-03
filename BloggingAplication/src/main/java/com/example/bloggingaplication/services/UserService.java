@@ -15,4 +15,6 @@ public interface UserService {
     public void deleteUser(Integer userId);
 
     public UserDto getUserByEmail(String email);
+
+    public UserDto registerUser(UserDto userDto);
 }
